@@ -5,22 +5,30 @@ const button = document.querySelector('button');
 const form = document.querySelector('form');
 let email;
 let message;
-const objectLocalStorage = JSON.parse(
-  localStorage.getItem('feedback-form-state')
-);
+try {
+  const objectLocalStorage = JSON.parse(
+    localStorage.getItem('feedback-form-state')
+  );
 
-if (objectLocalStorage !== undefined && objectLocalStorage !== null) {
-  input.value = objectLocalStorage.email;
-  textarea.value = objectLocalStorage.message;
-  email = objectLocalStorage.email;
-  message = objectLocalStorage.message;
+  if (objectLocalStorage !== undefined && objectLocalStorage !== null) {
+    input.value = objectLocalStorage.email;
+    textarea.value = objectLocalStorage.message;
+    email = objectLocalStorage.email;
+    message = objectLocalStorage.message;
+  }
+} catch (e) {
+  console.error('Error while getting data from Local Storage:', e);
 }
 
 form.addEventListener('input', throttle((e) => {
   email = input.value;
     message = textarea.value;
     const object = { email, message };
-  localStorage.setItem('feedback-form-state', JSON.stringify(object));
+    try {
+      localStorage.setItem('feedback-form-state', JSON.stringify(object));
+    } catch (e) {
+      console.error('Nie udało się zapisać danych do localStorage', e);
+    }
 }, 500));
 
 
