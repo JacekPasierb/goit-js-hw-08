@@ -1,26 +1,17 @@
 import Vimeo from '@vimeo/player';
-
-
+import throttle  from 'lodash.throttle';
 const iframe = document.querySelector("iframe");
 const player = new Vimeo(iframe);
+const savedTime = Number(localStorage.getItem('videoplayer-current-time'));
 
-const savedTime = localStorage.getItem('videoplayer-current-time');
+  player
+    .setCurrentTime(savedTime);
 
-if (savedTime !== null) {
-  console.log(3)
-  player.setCurrentTime(savedTime);
-}
-
- player.on('play', function () {
-   console.log('played the video!');
- });
-
-
- player.getVideoTitle().then(function (title) {
-   console.log('title:', title);
- });
-
- // nasłuchujemy wydarzenie
-player.on('timeupdate', _.throttle((e) => {
-  localStorage.setItem('videoplayer-current-time', JSON.stringify(e.seconds));
-}),10000);
+ 
+ 
+player.on(
+  'timeupdate',
+  throttle(e => {
+    localStorage.setItem('videoplayer-current-time', e.seconds);
+  }, 1000)
+);
